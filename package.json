@@ -1,0 +1,20 @@
+{
+  "name": "@pipeworx/mcp-datacube-sk",
+  "version": "0.1.0",
+  "description": "DATAcube — Statistical Office of the Slovak Republic (data.statistics.sk).",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "keywords": ["mcp", "mcp-server", "model-context-protocol", "pipeworx", "datacube-sk"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pipeworx-io/mcp-datacube-sk"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}
