@@ -830,15 +830,59 @@ async function getData(args: Record<string, unknown>): Promise<unknown> {
     throw new Error('selections must be a non-empty array of strings (one per dimension, in dataset_dimensions order). Use dataset_dimensions to find dimension order and valid codes.');
   }
   const path = (sel as string[]).map((s) => encodeURIComponent(s.trim())).join('/');
-  return dcGet(`/dataset/${encodeURIComponent(cube)}/${path}?lang=${lang}`);
+  let out: { size?: number[]; id?: string[]; value?: unknown[] | Record<string, unknown> };
+  try {
+    out = (await dcGet(`/dataset/${encodeURIComponent(cube)}/${path}?lang=${lang}`)) as typeof out;
+  } catch (err) {
+    // DATAcube answers an unknown cube with 400 {"status_message":"Name API not
+    // foud: <cube>"} (sic). That threw as a Pipeworx defect (fleet #2496).
+    if (err instanceof DcHttpError && err.status === 400 && /not fou?n?d/i.test(err.body)) {
+      return {
+        error: 'not_found',
+        message: `DATAcube has no cube "${cube}". Call list_datasets({query: "..."}) to find the cube code.`,
+        cube,
+      };
+    }
+    throw err;
+  }
+  // A selection code the cube does not have is NOT an error upstream: DATAcube
+  // returns a normal JSON-stat dataset with that dimension's size 0 and no
+  // values — a plain success with nothing in it (fleet #2496). Say so.
+  const size = Array.isArray(out?.size) ? out.size : [];
+  const zeroDims = (out?.id ?? []).filter((_, i) => size[i] === 0);
+  const noValues = Array.isArray(out?.value) ? out.value.length === 0 : out?.value != null && Object.keys(out.value).length === 0;
+  if (zeroDims.length > 0 || noValues) {
+    return {
+      ...out,
+      empty_reason: 'no_match',
+      note:
+        `DATAcube cube "${cube}" returned no values for selections ${JSON.stringify(sel)}` +
+        `${zeroDims.length ? ` — nothing matched in dimension(s) ${zeroDims.join(', ')}` : ''}. ` +
+        `Check the codes with dataset_dimensions({cube: "${cube}"}).`,
+    };
+  }
+  return out;
 }
 
 async function dcGet(path: string): Promise<unknown> {
   const res = await pwFetch(`${BASE}${path}`, {
     headers: { Accept: 'application/json', 'User-Agent': UA },
   });
-  if (!res.ok) throw new Error(`DATAcube: ${res.status} ${await res.text().then((t) => t.slice(0, 200))}`);
+  if (!res.ok) {
+    const body = await res.text().then((t) => t.slice(0, 200));
+    throw new DcHttpError(res.status, body, `DATAcube: ${res.status} ${body}`);
+  }
   return res.json();
+}
+
+class DcHttpError extends Error {
+  readonly status: number;
+  readonly body: string;
+  constructor(status: number, body: string, message: string) {
+    super(message);
+    this.status = status;
+    this.body = body;
+  }
 }
 
 function cubeFromHref(href: string | undefined): string | undefined {
