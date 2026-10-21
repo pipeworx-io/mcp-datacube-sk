@@ -1,6 +1,6 @@
 {
   "name": "@pipeworx/mcp-datacube-sk",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "DATAcube — Statistical Office of the Slovak Republic (data.statistics.sk).",
   "type": "module",
   "main": "src/index.ts",
@@ -26,7 +26,7 @@
     "@cloudflare/workers-types": "^4.20260405.1"
   },
   "pipeworx": {
-    "sourceHash": "v1-1f5767dfe4a92bdc524970d0bd33d2502d4fd95a7ec3e33a948e5bfff971addc",
-    "sourceCommit": "a00767651388cfd017fdeac82188622721db2051"
+    "sourceHash": "v1-4c9e3407a8cc7c0c5c6b88f4dbe3c488750ea565dc9309c274b4e4d35ed30773",
+    "sourceCommit": "8355bf3d1eece256a62a89dba2278e7a77bebe07"
   }
 }
