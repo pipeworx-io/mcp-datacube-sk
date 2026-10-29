@@ -1,12 +1,20 @@
 {
   "name": "@pipeworx/mcp-datacube-sk",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "DATAcube — Statistical Office of the Slovak Republic (data.statistics.sk).",
   "type": "module",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./tools.json": "./tools.json",
+    "./package.json": "./package.json"
+  },
   "bin": {
     "mcp-datacube-sk": "bin/cli.js"
+  },
+  "files": ["bin/", "lib/", "tools.json", "server.json"],
+  "engines": {
+    "node": ">=18"
   },
   "keywords": ["mcp", "mcp-server", "model-context-protocol", "pipeworx", "datacube-sk"],
   "license": "MIT",
@@ -14,19 +22,12 @@
     "type": "git",
     "url": "git+https://github.com/pipeworx-io/mcp-datacube-sk.git"
   },
-  "scripts": {
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.30.0",
-    "tsx": "^4.19.0"
-  },
-  "devDependencies": {
-    "typescript": "^5.9.3",
-    "@cloudflare/workers-types": "^4.20260405.1"
-  },
+  "mcpName": "io.github.pipeworx-io/datacube-sk",
   "pipeworx": {
-    "sourceHash": "v1-d215c379e9bb25618ca6e0aae43e5c86ee171c7d39d04574ffc4ba254d448a03",
-    "sourceCommit": "01241619b78233fd55d0e3612331499a63f03ae7"
+    "mode": "gateway",
+    "slug": "datacube-sk",
+    "gatewaySlug": "datacube-sk",
+    "sourceHash": "v1-31becefb064ad5d58a2299bfa05f41816190fd44cde9d6c4ddea861d13ed7788",
+    "sourceCommit": "0b3faaa4d85299a961dd86dea75a0f0e1dad280c"
   }
 }
